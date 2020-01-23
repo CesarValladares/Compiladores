@@ -3,18 +3,26 @@ import numpy as np
 import matplotlib.pyplot as plt
 import pylab
 
-states = []
+states = [0]
 last_state = 0
 automata = []
 alphabet = []
 special = ['(', ')', '|']
 
 def createNFA(regex, star, finish): 
+
     global last_state
     parent = False
     p_counter = 0
     mini_regex = ''
     state_before = last_state
+
+    if star == True:
+
+        state = [last_state, 'ep', last_state+1]
+        last_state += 1
+
+        automata.append(state)
 
     for index, char in enumerate(regex):
 
@@ -47,8 +55,7 @@ def createNFA(regex, star, finish):
 
         elif p_counter > 0:
                 mini_regex+= char
-
-                  
+       
     if parent == False:
         if '|' in regex:
             or_states = regex.split('|')
@@ -69,6 +76,9 @@ def createNFA(regex, star, finish):
                     last_state += 1                    
                     automata.append(state)
 
+                    if last_state not in states:
+                        states.append(last_state)
+
                     if index == len(or_state) -1:       
                         state = [last_state, 'ep', Num_f_state]
                         automata.append(state)
@@ -79,7 +89,10 @@ def createNFA(regex, star, finish):
 
                 star = False
 
-            last_state = Num_f_state
+            last_state = or_las_state            
+
+            if last_state not in states:
+                states.append(last_state)
 
         else: 
 
@@ -87,16 +100,19 @@ def createNFA(regex, star, finish):
                 state = [last_state, char, last_state +1]
                 last_state += 1
                 automata.append(state)
+                if last_state not in states:
+                        states.append(last_state)
 
             if star == True:
 
                 state = [last_state, 'ep', state_before]
                 automata.append(state)
 
-            
+                last_state = state_before
 
     if star:
         state = [last_state, 'ep', state_before]
+        last_state = state_before
 
 def epsilon_closure(states):
     
@@ -108,9 +124,7 @@ def epsilon_closure(states):
     return states
 
 def move(state,symbol):
-
     temp = []
-
     for s in state:
         for nfa_state in automata:
             if nfa_state[0] == s and nfa_state[1] == symbol and not nfa_state[2] in temp:
@@ -120,7 +134,6 @@ def move(state,symbol):
 
     return temp
 
-
 def isNew(state,new_states):
 
     for n in new_states:
@@ -128,7 +141,6 @@ def isNew(state,new_states):
             return 0
 
     return 1
-
 
 def NFA_to_DFA(nfa_initial_state,nfa_final_state,alphabet):
 
@@ -165,20 +177,52 @@ def NFA_to_DFA(nfa_initial_state,nfa_final_state,alphabet):
 
     return dfa
     
+def EvaluateString(cadena, ODFA):
+    dfa = ODFA["dfa"]
+    ini = 0
+    valid = False
 
-# regex = input("Enter Regex\n")
-regex = "(ab|cd)"
-print("REGEX", regex)
+    for char in cadena:
+        for index, state in enumerate(dfa):
+            if state[0] == ini:
+                if state[1] == char:
+                    ini = state[2]
+                    break
+
+                elif index == len(dfa)-1:
+
+                    print("NOT", char, state, index)
+                    ini = -1
+
+    for final in ODFA["final_states"]:
+        if ini == ODFA["states"].index(final):
+            valid = True
+    
+    return valid
+
+
+regex = input("Enter Regex\n")
 createNFA(regex, False, 1)
 
 dfa = NFA_to_DFA(0, last_state, alphabet)
 
-print("NFA")
-for states in automata:
-    print(states)
+# Grafico
+g = nx.DiGraph()
+g2 = nx.DiGraph()
+g.add_nodes_from(states)
 
+# Datos de NFA
+print("NFA")
+for state in automata:
+    print(state)
+
+    g.add_edge(state[0], state[2])
+
+
+# Datos de DFA
 print("DFA")
 for a in dfa["dfa"]:
+    g2.add_edge(a[0], a[2])
     print(a)
 
 print("DFA final states:")
@@ -186,15 +230,14 @@ for final in dfa["final_states"]:
     print(dfa["states"].index(final))
 
 
-g = nx.DiGraph()
-g.add_nodes_from([1,2,3,4,5])
-g.add_edge(1,2)
-g.add_edge(4,2)
-g.add_edge(3,5)
-g.add_edge(2,3)
-g.add_edge(5,4)
-
-nx.draw(g,with_labels=True)
+nx.draw(g,with_labels=True, arrows=True)
 plt.draw()
 plt.show()
-pylab.show()
+
+nx.draw(g2,with_labels=True, arrows=True)
+plt.draw()
+plt.show()
+
+while True:
+    cadena = input("Enter string\n")
+    print(EvaluateString(cadena, dfa))
