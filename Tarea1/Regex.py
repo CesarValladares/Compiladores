@@ -5,13 +5,17 @@ import pylab
 
 states = [0]
 last_state = 0
+counter_state = 0
 automata = []
 alphabet = []
 special = ['(', ')', '|']
 
 def createNFA(regex, star, finish): 
 
+    print("REGES", regex, star)
+
     global last_state
+    global counter_state
     parent = False
     p_counter = 0
     mini_regex = ''
@@ -19,10 +23,12 @@ def createNFA(regex, star, finish):
 
     if star == True:
 
-        state = [last_state, 'ep', last_state+1]
-        last_state += 1
+        state = [last_state, 'ep', last_state+1+counter_state]
+        last_state += (1 + counter_state)
+        if counter_state != 0: counter_state = 0
 
-        automata.append(state)
+        if state not in automata:
+            automata.append(state)
 
     for index, char in enumerate(regex):
 
@@ -48,6 +54,7 @@ def createNFA(regex, star, finish):
 
                     createNFA(mini_regex, True, 0)
 
+
                 else: 
                     createNFA(mini_regex, False, 0)
 
@@ -69,23 +76,29 @@ def createNFA(regex, star, finish):
                 for index, char in enumerate(or_state):
                     
                     if index == 0:
-                        state = [or_las_state, char, last_state + 1]
+                        state = [or_las_state, char, last_state + 1 +counter_state]
                     else:
-                        state = [last_state, char, last_state + 1]
+                        state = [last_state, char, last_state + 1 +counter_state]
 
-                    last_state += 1                    
-                    automata.append(state)
+                    last_state += (1 + counter_state)
+                    if counter_state != 0: counter_state = 0
+
+                    if state not in automata:
+                        automata.append(state)
 
                     if last_state not in states:
                         states.append(last_state)
 
                     if index == len(or_state) -1:       
                         state = [last_state, 'ep', Num_f_state]
-                        automata.append(state)
+                        if state not in automata:
+                            automata.append(state)
 
             if star == True: 
+
                 state = [Num_f_state, 'ep', or_las_state]
-                automata.append(state)
+                if state not in automata:
+                    automata.append(state)
 
                 star = False
 
@@ -96,18 +109,22 @@ def createNFA(regex, star, finish):
 
         else: 
 
+            star_states = 1
+
             for char in regex:
                 state = [last_state, char, last_state +1]
                 last_state += 1
-                automata.append(state)
-                if last_state not in states:
-                        states.append(last_state)
+                star_states += 1
+
+                if state not in automata:
+                    automata.append(state)
 
             if star == True:
-
                 state = [last_state, 'ep', state_before]
-                automata.append(state)
+                if state not in automata:
+                    automata.append(state)
 
+                counter_state = star_states
                 last_state = state_before
 
     if star:
@@ -157,6 +174,9 @@ def NFA_to_DFA(nfa_initial_state,nfa_final_state,alphabet):
     
     new_states.append(current_state)
 
+    if nfa_final_state in current_state:
+        final_states.append(current_state)
+
     for state in new_states:
         for symbol in alphabet:
 
@@ -183,17 +203,21 @@ def EvaluateString(cadena, ODFA):
     valid = False
 
     for char in cadena:
+
+        found = False
+
         for index, state in enumerate(dfa):
             if state[0] == ini:
                 if state[1] == char:
+                    found = True
                     ini = state[2]
                     break
 
-                elif index == len(dfa)-1:
+                
+        if found == False:            
+            ini = -1
 
-                    print("NOT", char, state, index)
-                    ini = -1
-
+                
     for final in ODFA["final_states"]:
         if ini == ODFA["states"].index(final):
             valid = True
