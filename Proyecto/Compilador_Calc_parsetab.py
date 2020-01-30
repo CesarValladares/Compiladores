@@ -6,9 +6,9 @@ _tabversion = '3.10'
 
 _lr_method = 'LALR'
 
-_lr_signature = 'leftPLUSMINUSleftTIMESDIVIDEleftEXPrightUMINUSCHAR COMMENT DIVIDE EQUALS EXP FACTORIAL FLOAT ID LPAREN MINUS NUMBER PLUS RPAREN SQUARE STRING TIMESstatement : STRING EQUALS expressionstatement : expression\n        expression : expression PLUS expression\n                  | expression MINUS expression\n                  | expression TIMES expression\n                  | expression DIVIDE expression\n                  | expression EXP expression\n        expression : MINUS expression %prec UMINUSexpression : LPAREN expression RPARENexpression : NUMBERexpression : STRING'
+_lr_signature = 'leftPLUSMINUSleftTIMESDIVIDEleftEXPrightUMINUSCHAR COMMA COMMENT DIVIDE EQUALS EXP FACTORIAL FLOAT ID LLLAVE LPAREN MINUS NUMBER PLUS RLLAVE RPAREN SQUARE STRING TIMES arraystatement : STRING EQUALS expressionstatement : STRING EQUALS LLLAVE statement RLLAVE\n                    | statement COMMA NUMBER\n                    | NUMBER statement : expression\n        expression : expression PLUS expression\n                  | expression MINUS expression\n                  | expression TIMES expression\n                  | expression DIVIDE expression\n                  | expression EXP expression\n        expression : MINUS expression %prec UMINUSexpression : LPAREN expression RPARENexpression : NUMBERexpression : STRING'
     
-_lr_action_items = {'STRING':([0,4,5,7,8,9,10,11,12,],[2,14,14,14,14,14,14,14,14,]),'MINUS':([0,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21,22,],[4,-11,9,4,4,-10,4,4,4,4,4,4,-8,-11,9,9,-3,-4,-5,-6,-7,-9,]),'LPAREN':([0,4,5,7,8,9,10,11,12,],[5,5,5,5,5,5,5,5,5,]),'NUMBER':([0,4,5,7,8,9,10,11,12,],[6,6,6,6,6,6,6,6,6,]),'$end':([1,2,3,6,13,14,16,17,18,19,20,21,22,],[0,-11,-2,-10,-8,-11,-1,-3,-4,-5,-6,-7,-9,]),'EQUALS':([2,],[7,]),'PLUS':([2,3,6,13,14,15,16,17,18,19,20,21,22,],[-11,8,-10,-8,-11,8,8,-3,-4,-5,-6,-7,-9,]),'TIMES':([2,3,6,13,14,15,16,17,18,19,20,21,22,],[-11,10,-10,-8,-11,10,10,10,10,-5,-6,-7,-9,]),'DIVIDE':([2,3,6,13,14,15,16,17,18,19,20,21,22,],[-11,11,-10,-8,-11,11,11,11,11,-5,-6,-7,-9,]),'EXP':([2,3,6,13,14,15,16,17,18,19,20,21,22,],[-11,12,-10,-8,-11,12,12,12,12,12,12,-7,-9,]),'RPAREN':([6,13,14,15,17,18,19,20,21,22,],[-10,-8,-11,22,-3,-4,-5,-6,-7,-9,]),}
+_lr_action_items = {'STRING':([0,5,6,8,9,10,11,12,13,20,],[2,16,16,16,16,16,16,16,16,2,]),'NUMBER':([0,5,6,7,8,9,10,11,12,13,20,],[4,15,15,18,15,15,15,15,15,15,4,]),'MINUS':([0,2,3,4,5,6,8,9,10,11,12,13,14,15,16,17,19,20,21,22,23,24,25,26,],[5,-14,10,-13,5,5,5,5,5,5,5,5,-11,-13,-14,10,10,5,-6,-7,-8,-9,-10,-12,]),'LPAREN':([0,5,6,8,9,10,11,12,13,20,],[6,6,6,6,6,6,6,6,6,6,]),'$end':([1,2,3,4,14,15,16,18,19,21,22,23,24,25,26,28,],[0,-14,-5,-4,-11,-13,-14,-3,-1,-6,-7,-8,-9,-10,-12,-2,]),'COMMA':([1,2,3,4,14,15,16,18,19,21,22,23,24,25,26,27,28,],[7,-14,-5,-4,-11,-13,-14,-3,-1,-6,-7,-8,-9,-10,-12,7,-2,]),'EQUALS':([2,],[8,]),'PLUS':([2,3,4,14,15,16,17,19,21,22,23,24,25,26,],[-14,9,-13,-11,-13,-14,9,9,-6,-7,-8,-9,-10,-12,]),'TIMES':([2,3,4,14,15,16,17,19,21,22,23,24,25,26,],[-14,11,-13,-11,-13,-14,11,11,11,11,-8,-9,-10,-12,]),'DIVIDE':([2,3,4,14,15,16,17,19,21,22,23,24,25,26,],[-14,12,-13,-11,-13,-14,12,12,12,12,-8,-9,-10,-12,]),'EXP':([2,3,4,14,15,16,17,19,21,22,23,24,25,26,],[-14,13,-13,-11,-13,-14,13,13,13,13,13,13,-10,-12,]),'RLLAVE':([2,3,4,14,15,16,18,19,21,22,23,24,25,26,27,28,],[-14,-5,-4,-11,-13,-14,-3,-1,-6,-7,-8,-9,-10,-12,28,-2,]),'LLLAVE':([8,],[20,]),'RPAREN':([14,15,16,17,21,22,23,24,25,26,],[-11,-13,-14,26,-6,-7,-8,-9,-10,-12,]),}
 
 _lr_action = {}
 for _k, _v in _lr_action_items.items():
@@ -17,7 +17,7 @@ for _k, _v in _lr_action_items.items():
       _lr_action[_x][_k] = _y
 del _lr_action_items
 
-_lr_goto_items = {'statement':([0,],[1,]),'expression':([0,4,5,7,8,9,10,11,12,],[3,13,15,16,17,18,19,20,21,]),}
+_lr_goto_items = {'statement':([0,20,],[1,27,]),'expression':([0,5,6,8,9,10,11,12,13,20,],[3,14,17,19,21,22,23,24,25,3,]),}
 
 _lr_goto = {}
 for _k, _v in _lr_goto_items.items():
@@ -27,15 +27,18 @@ for _k, _v in _lr_goto_items.items():
 del _lr_goto_items
 _lr_productions = [
   ("S' -> statement","S'",1,None,None,None),
-  ('statement -> STRING EQUALS expression','statement',3,'p_statement_assign','Compilador.py',113),
-  ('statement -> expression','statement',1,'p_statement_expr','Compilador.py',117),
-  ('expression -> expression PLUS expression','expression',3,'p_expression_binop','Compilador.py',122),
-  ('expression -> expression MINUS expression','expression',3,'p_expression_binop','Compilador.py',123),
-  ('expression -> expression TIMES expression','expression',3,'p_expression_binop','Compilador.py',124),
-  ('expression -> expression DIVIDE expression','expression',3,'p_expression_binop','Compilador.py',125),
-  ('expression -> expression EXP expression','expression',3,'p_expression_binop','Compilador.py',126),
-  ('expression -> MINUS expression','expression',2,'p_expression_uminus','Compilador.py',140),
-  ('expression -> LPAREN expression RPAREN','expression',3,'p_expression_group','Compilador.py',144),
-  ('expression -> NUMBER','expression',1,'p_expression_number','Compilador.py',148),
-  ('expression -> STRING','expression',1,'p_expression_string','Compilador.py',152),
+  ('statement -> STRING EQUALS expression','statement',3,'p_statement_assign','Compilador.py',120),
+  ('statement -> STRING EQUALS LLLAVE statement RLLAVE','statement',5,'p_statement_list','Compilador.py',124),
+  ('statement -> statement COMMA NUMBER','statement',3,'p_statement_list','Compilador.py',125),
+  ('statement -> NUMBER','statement',1,'p_statement_list','Compilador.py',126),
+  ('statement -> expression','statement',1,'p_statement_expr','Compilador.py',142),
+  ('expression -> expression PLUS expression','expression',3,'p_expression_binop','Compilador.py',147),
+  ('expression -> expression MINUS expression','expression',3,'p_expression_binop','Compilador.py',148),
+  ('expression -> expression TIMES expression','expression',3,'p_expression_binop','Compilador.py',149),
+  ('expression -> expression DIVIDE expression','expression',3,'p_expression_binop','Compilador.py',150),
+  ('expression -> expression EXP expression','expression',3,'p_expression_binop','Compilador.py',151),
+  ('expression -> MINUS expression','expression',2,'p_expression_uminus','Compilador.py',165),
+  ('expression -> LPAREN expression RPAREN','expression',3,'p_expression_group','Compilador.py',169),
+  ('expression -> NUMBER','expression',1,'p_expression_number','Compilador.py',173),
+  ('expression -> STRING','expression',1,'p_expression_string','Compilador.py',177),
 ]

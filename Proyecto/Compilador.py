@@ -15,6 +15,7 @@ class Parser(object):
     def __init__(self, **kw):
         self.debug = kw.get('debug', 0)
         self.names = {}
+        self.arrays = []
         try:
             modname = os.path.split(os.path.splitext(__file__)[0])[
                 1] + "_" + self.__class__.__name__
@@ -34,12 +35,26 @@ class Parser(object):
     def run(self):
         while 1:
             try:
-                s = input('calc > ')
+                s = input('lobo > ')
             except EOFError:
                 break
             if not s:
                 continue
+
             yacc.parse(s)
+
+    def readFile(self, fileName):
+
+        file1 = open(fileName, 'r')
+        lines = file1.readlines()
+
+        for i, line in enumerate(lines):
+
+            try:
+                yacc.parse(line)
+            except EOFError:
+
+                print("Error in line ", i, line)
 
 
 class Calc(Parser):
@@ -60,7 +75,11 @@ class Calc(Parser):
         'SQUARE',
         'LPAREN',
         'RPAREN',
-        'COMMENT'
+        'LLLAVE',
+        'RLLAVE',
+        'COMMA',
+        'COMMENT',
+        'array'
     )
 
     t_PLUS = r'\+'
@@ -71,9 +90,12 @@ class Calc(Parser):
     t_SQUARE = r'¬'
     t_LPAREN = r'\('
     t_RPAREN = r'\)'
+    t_LLLAVE = r'\['
+    t_RLLAVE = r'\]'
     t_EQUALS = r'='
     t_EXP = r'\*\*'
     t_STRING = r'[a-zA-Z_][a-zA-Z0-9_]*'
+    t_COMMA = r','
 
     def t_NUMBER(self, t):
         r'\d+'
@@ -112,6 +134,22 @@ class Calc(Parser):
     def p_statement_assign(self, p):
         'statement : STRING EQUALS expression'
         self.names[p[1]] = p[3]
+
+    def p_statement_list(self, p):
+        '''statement : STRING EQUALS LLLAVE statement RLLAVE
+                    | statement COMMA NUMBER
+                    | NUMBER '''
+
+        if len(p) == 2:
+            p[0] = [p[1]]
+
+        elif len(p) == 4:
+            p[0] = p[1] + [p[3]]
+
+        else:
+            p[0] = p[4]
+            array = [p[1], p[0]]
+            self.arrays.append(array)
 
     def p_statement_expr(self, p):
         'statement : expression'
@@ -152,9 +190,16 @@ class Calc(Parser):
         'expression : STRING'
         try:
             p[0] = self.names[p[1]]
-        except LookupError:
-            print("Undefined sttring '%s'" % p[1])
-            p[0] = 0
+
+        except:
+            try:
+                for array in self.arrays:
+                    if array[0] == p[1]:
+                        p[0] = array[1]
+
+            except LookupError:
+                print("Undefined string '%s'" % p[1])
+                p[0] = 0
 
     def p_error(self, p):
         if p:
@@ -162,6 +207,19 @@ class Calc(Parser):
         else:
             print("Syntax error at EOF")
 
+
 if __name__ == '__main__':
+
     calc = Calc()
-    calc.run()
+
+
+    try: 
+        fileName = sys.argv[1]
+
+        if fileName.endswith('.lb'):
+            calc.readFile(fileName)
+        else:
+            print("Extension error")
+    except:
+        
+        calc.run()
