@@ -6,9 +6,9 @@ _tabversion = '3.10'
 
 _lr_method = 'LALR'
 
-_lr_signature = 'leftPLUSMINUSleftTIMESDIVIDEleftEXPLPARENrightUMINUSnonassocFORFUNCCHAR COMMA COMMENT COMPARISON DIVIDE ELSE EQUALS EXP FACTORIAL FLOAT FOR FORFUNC ID IF LBRACKET LKEY LPAREN MINUS NUMBER PLUS PRINT RBRACKET RKEY RPAREN SEMICOLON SQUARE STRING THEN TIMES WHILEstatement : ID EQUALS expressionstatement : PRINT expressionstatement : ID EQUALS LBRACKET statement RBRACKET\n                    | statement COMMA NUMBER\n                    | NUMBER statement : expressionstatement : FOR LPAREN expression RPAREN LKEY statement RKEYexpression : ID SEMICOLON expression SEMICOLON expression\n        expression : expression PLUS expression\n                  | expression MINUS expression\n                  | expression TIMES expression\n                  | expression DIVIDE expression\n                  | expression EXP expression\n        expression : MINUS expression %prec UMINUSexpression : ID LBRACKET NUMBER RBRACKETexpression : NUMBERexpression : STRINGexpression : ID'
+_lr_signature = 'leftPLUSMINUSMORETHANLESSTHANMOREOREQUALLESSOREQUALSAMEleftTIMESDIVIDEleftEXPLPARENrightUMINUSCHAR COMMA COMMENT DIVIDE ELSE EQUALS EXP FACTORIAL FLOAT FOR FORFUNC ID IF LBRACKET LESSOREQUAL LESSTHAN LKEY LPAREN MINUS MOREOREQUAL MORETHAN NUMBER PLUS PRINT RBRACKET RKEY RPAREN SAME SEMICOLON SQUARE STRING THEN TIMES WHILEstatement : ID EQUALS expressionstatement : PRINT expressionstatement : ID EQUALS LBRACKET statement RBRACKET\n                    | statement COMMA NUMBER\n                    | NUMBER statement : expression\n        expression : expression PLUS expression\n                  | expression MINUS expression\n                  | expression TIMES expression\n                  | expression DIVIDE expression\n                  | expression EXP expression\n        expression : MINUS expression %prec UMINUSexpression : ID LBRACKET NUMBER RBRACKETexpression : NUMBERexpression : STRINGexpression : ID'
     
-_lr_action_items = {'ID':([0,4,7,10,12,13,14,15,16,17,21,25,36,40,],[2,19,19,19,19,19,19,19,19,19,19,2,19,2,]),'PRINT':([0,25,40,],[4,4,4,]),'NUMBER':([0,4,7,9,10,11,12,13,14,15,16,17,21,25,36,40,],[5,20,20,23,20,26,20,20,20,20,20,20,20,5,20,5,]),'FOR':([0,25,40,],[6,6,6,]),'MINUS':([0,2,3,4,5,7,8,10,12,13,14,15,16,17,18,19,20,21,22,24,25,27,28,29,30,31,32,33,35,36,39,40,],[7,-18,14,7,-16,7,-17,7,7,7,7,7,7,7,14,-18,-16,7,-14,14,7,14,-9,-10,-11,-12,-13,14,-15,7,14,7,]),'STRING':([0,4,7,10,12,13,14,15,16,17,21,25,36,40,],[8,8,8,8,8,8,8,8,8,8,8,8,8,8,]),'$end':([1,2,3,5,8,18,19,20,22,23,24,28,29,30,31,32,35,38,39,42,],[0,-18,-6,-5,-17,-2,-18,-16,-14,-4,-1,-9,-10,-11,-12,-13,-15,-3,-8,-7,]),'COMMA':([1,2,3,5,8,18,19,20,22,23,24,28,29,30,31,32,34,35,38,39,41,42,],[9,-18,-6,-5,-17,-2,-18,-16,-14,-4,-1,-9,-10,-11,-12,-13,9,-15,-3,-8,9,-7,]),'EQUALS':([2,],[10,]),'SEMICOLON':([2,8,19,20,22,27,28,29,30,31,32,35,39,],[12,-17,12,-16,-14,36,-9,-10,-11,-12,-13,-15,-8,]),'LBRACKET':([2,10,19,],[11,25,11,]),'PLUS':([2,3,5,8,18,19,20,22,24,27,28,29,30,31,32,33,35,39,],[-18,13,-16,-17,13,-18,-16,-14,13,13,-9,-10,-11,-12,-13,13,-15,13,]),'TIMES':([2,3,5,8,18,19,20,22,24,27,28,29,30,31,32,33,35,39,],[-18,15,-16,-17,15,-18,-16,-14,15,15,15,15,-11,-12,-13,15,-15,15,]),'DIVIDE':([2,3,5,8,18,19,20,22,24,27,28,29,30,31,32,33,35,39,],[-18,16,-16,-17,16,-18,-16,-14,16,16,16,16,-11,-12,-13,16,-15,16,]),'EXP':([2,3,5,8,18,19,20,22,24,27,28,29,30,31,32,33,35,39,],[-18,17,-16,-17,17,-18,-16,-14,17,17,17,17,17,17,-13,17,-15,17,]),'RBRACKET':([2,3,5,8,18,19,20,22,23,24,26,28,29,30,31,32,34,35,38,39,42,],[-18,-6,-5,-17,-2,-18,-16,-14,-4,-1,35,-9,-10,-11,-12,-13,38,-15,-3,-8,-7,]),'RKEY':([2,3,5,8,18,19,20,22,23,24,28,29,30,31,32,35,38,39,41,42,],[-18,-6,-5,-17,-2,-18,-16,-14,-4,-1,-9,-10,-11,-12,-13,-15,-3,-8,42,-7,]),'LPAREN':([6,],[21,]),'RPAREN':([8,19,20,22,28,29,30,31,32,33,35,39,],[-17,-18,-16,-14,-9,-10,-11,-12,-13,37,-15,-8,]),'LKEY':([37,],[40,]),}
+_lr_action_items = {'ID':([0,4,6,9,11,12,13,14,15,22,],[2,17,17,17,17,17,17,17,17,2,]),'PRINT':([0,22,],[4,4,]),'NUMBER':([0,4,6,8,9,10,11,12,13,14,15,22,],[5,18,18,20,18,23,18,18,18,18,18,5,]),'MINUS':([0,2,3,4,5,6,7,9,11,12,13,14,15,16,17,18,19,21,22,24,25,26,27,28,30,],[6,-16,12,6,-14,6,-15,6,6,6,6,6,6,12,-16,-14,-12,12,6,-7,-8,-9,-10,-11,-13,]),'STRING':([0,4,6,9,11,12,13,14,15,22,],[7,7,7,7,7,7,7,7,7,7,]),'$end':([1,2,3,5,7,16,17,18,19,20,21,24,25,26,27,28,30,31,],[0,-16,-6,-5,-15,-2,-16,-14,-12,-4,-1,-7,-8,-9,-10,-11,-13,-3,]),'COMMA':([1,2,3,5,7,16,17,18,19,20,21,24,25,26,27,28,29,30,31,],[8,-16,-6,-5,-15,-2,-16,-14,-12,-4,-1,-7,-8,-9,-10,-11,8,-13,-3,]),'EQUALS':([2,],[9,]),'LBRACKET':([2,9,17,],[10,22,10,]),'PLUS':([2,3,5,7,16,17,18,19,21,24,25,26,27,28,30,],[-16,11,-14,-15,11,-16,-14,-12,11,-7,-8,-9,-10,-11,-13,]),'TIMES':([2,3,5,7,16,17,18,19,21,24,25,26,27,28,30,],[-16,13,-14,-15,13,-16,-14,-12,13,13,13,-9,-10,-11,-13,]),'DIVIDE':([2,3,5,7,16,17,18,19,21,24,25,26,27,28,30,],[-16,14,-14,-15,14,-16,-14,-12,14,14,14,-9,-10,-11,-13,]),'EXP':([2,3,5,7,16,17,18,19,21,24,25,26,27,28,30,],[-16,15,-14,-15,15,-16,-14,-12,15,15,15,15,15,-11,-13,]),'RBRACKET':([2,3,5,7,16,17,18,19,20,21,23,24,25,26,27,28,29,30,31,],[-16,-6,-5,-15,-2,-16,-14,-12,-4,-1,30,-7,-8,-9,-10,-11,31,-13,-3,]),}
 
 _lr_action = {}
 for _k, _v in _lr_action_items.items():
@@ -17,7 +17,7 @@ for _k, _v in _lr_action_items.items():
       _lr_action[_x][_k] = _y
 del _lr_action_items
 
-_lr_goto_items = {'statement':([0,25,40,],[1,34,41,]),'expression':([0,4,7,10,12,13,14,15,16,17,21,25,36,40,],[3,18,22,24,27,28,29,30,31,32,33,3,39,3,]),}
+_lr_goto_items = {'statement':([0,22,],[1,29,]),'expression':([0,4,6,9,11,12,13,14,15,22,],[3,16,19,21,24,25,26,27,28,3,]),}
 
 _lr_goto = {}
 for _k, _v in _lr_goto_items.items():
@@ -27,22 +27,20 @@ for _k, _v in _lr_goto_items.items():
 del _lr_goto_items
 _lr_productions = [
   ("S' -> statement","S'",1,None,None,None),
-  ('statement -> ID EQUALS expression','statement',3,'p_statement_assign','Compilador.py',161),
-  ('statement -> PRINT expression','statement',2,'p_statement_print','Compilador.py',167),
-  ('statement -> ID EQUALS LBRACKET statement RBRACKET','statement',5,'p_statement_list','Compilador.py',172),
-  ('statement -> statement COMMA NUMBER','statement',3,'p_statement_list','Compilador.py',173),
-  ('statement -> NUMBER','statement',1,'p_statement_list','Compilador.py',174),
-  ('statement -> expression','statement',1,'p_statement_expr','Compilador.py',187),
-  ('statement -> FOR LPAREN expression RPAREN LKEY statement RKEY','statement',7,'p_statement_for','Compilador.py',191),
-  ('expression -> ID SEMICOLON expression SEMICOLON expression','expression',5,'p_expression_for','Compilador.py',197),
-  ('expression -> expression PLUS expression','expression',3,'p_expression_binop','Compilador.py',203),
-  ('expression -> expression MINUS expression','expression',3,'p_expression_binop','Compilador.py',204),
-  ('expression -> expression TIMES expression','expression',3,'p_expression_binop','Compilador.py',205),
-  ('expression -> expression DIVIDE expression','expression',3,'p_expression_binop','Compilador.py',206),
-  ('expression -> expression EXP expression','expression',3,'p_expression_binop','Compilador.py',207),
-  ('expression -> MINUS expression','expression',2,'p_expression_uminus','Compilador.py',221),
-  ('expression -> ID LBRACKET NUMBER RBRACKET','expression',4,'p_expression_data_in_array','Compilador.py',225),
-  ('expression -> NUMBER','expression',1,'p_expression_number','Compilador.py',241),
-  ('expression -> STRING','expression',1,'p_expression_string','Compilador.py',245),
-  ('expression -> ID','expression',1,'p_expression_ID','Compilador.py',249),
+  ('statement -> ID EQUALS expression','statement',3,'p_statement_assign','Compilador.py',176),
+  ('statement -> PRINT expression','statement',2,'p_statement_print','Compilador.py',182),
+  ('statement -> ID EQUALS LBRACKET statement RBRACKET','statement',5,'p_statement_list','Compilador.py',188),
+  ('statement -> statement COMMA NUMBER','statement',3,'p_statement_list','Compilador.py',189),
+  ('statement -> NUMBER','statement',1,'p_statement_list','Compilador.py',190),
+  ('statement -> expression','statement',1,'p_statement_expr','Compilador.py',203),
+  ('expression -> expression PLUS expression','expression',3,'p_expression_binop','Compilador.py',234),
+  ('expression -> expression MINUS expression','expression',3,'p_expression_binop','Compilador.py',235),
+  ('expression -> expression TIMES expression','expression',3,'p_expression_binop','Compilador.py',236),
+  ('expression -> expression DIVIDE expression','expression',3,'p_expression_binop','Compilador.py',237),
+  ('expression -> expression EXP expression','expression',3,'p_expression_binop','Compilador.py',238),
+  ('expression -> MINUS expression','expression',2,'p_expression_uminus','Compilador.py',252),
+  ('expression -> ID LBRACKET NUMBER RBRACKET','expression',4,'p_expression_data_in_array','Compilador.py',256),
+  ('expression -> NUMBER','expression',1,'p_expression_number','Compilador.py',272),
+  ('expression -> STRING','expression',1,'p_expression_string','Compilador.py',276),
+  ('expression -> ID','expression',1,'p_expression_ID','Compilador.py',280),
 ]

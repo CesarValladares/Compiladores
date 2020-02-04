@@ -1,2 +1,6 @@
-a = 0
-for(a;20;1){print a}
+a = 3
+for (a ; 10 ; 2) {
+    algo = a + 10
+    print algo
+}
+print 'Final del loop'

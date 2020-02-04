@@ -16,6 +16,8 @@ class Parser(object):
         self.debug = kw.get('debug', 0)
         self.names = {}
         self.arrays = {}
+        self.lines_loop = []
+        self.counter_lines = []
         self.current_line = ''
         try:
             modname = os.path.split(os.path.splitext(__file__)[0])[
@@ -53,7 +55,50 @@ class Parser(object):
 
             try:
                 self.current_line = line
-                yacc.parse(line)
+                
+                if 'for' in line:
+                
+                    line = line.replace('for', '')
+                    line = line.replace('(', '')
+                    line = line.replace(')', '')
+                    line = line.replace(' ', '')
+                    line = line.replace('{', '')
+                    line = line.replace('\n', '')
+
+                    args = line.split(';')
+
+                    aux_line = ''
+                    aux_i = i              
+
+                    while '}' not in aux_line:
+
+                        if '}' in aux_line:
+                            break
+
+                        aux_i += 1
+                        aux_line = lines[aux_i].replace("\n",'')
+                        
+                        if '}' not in aux_line:
+                            self.lines_loop.append(aux_line)
+                            self.counter_lines.append(aux_i)
+
+                    start_for = self.names[args[0]]    
+                    
+                    for algo in range(start_for, int(args[1]), int(args[2])):
+
+                        if self.names[args[0]] + int(args[2]) < int(args[1]):
+                                                    
+                            self.names[args[0]] += int(args[2])
+                            for loop_line in self.lines_loop:
+                                yacc.parse(loop_line)
+
+                else:
+                    
+
+                    if i not in self.counter_lines and '}' not in line:
+                        self.lines_loop = []
+                        self.counter_lines = []
+                        yacc.parse(line)
 
             except EOFError:
 
@@ -94,11 +139,20 @@ class Calc(Parser):
         'FORFUNC',
         'LBRACKET',
         'RBRACKET',
-        'COMPARISON',
+        'LESSTHAN',
+        'LESSOREQUAL',
+        'MORETHAN',
+        'MOREOREQUAL',
+        'SAME',
         'SEMICOLON',
         
     ] + list(reserved.values())
     
+    t_LESSTHAN = r'<'
+    t_MORETHAN = r'>'
+    t_MOREOREQUAL = r'>='
+    t_LESSOREQUAL = r'<='
+    t_SAME = r'=='
     t_PLUS = r'\+'
     t_MINUS = r'-'
     t_TIMES = r'\*'
@@ -113,8 +167,7 @@ class Calc(Parser):
     t_RKEY = r'\}'
     t_EQUALS = r'='
     t_EXP = r'\*\*'
-    t_STRING = r'\'[a-zA-Z_][a-zA-Z0-9_]*\''
-    t_COMPARISON = r'[<][>][<=][>=][==]'
+    t_STRING = r'\'[a-zA-Z_][a-zA-Z0-9_ ]*\''
     t_COMMA = r','
     t_SEMICOLON = r'\;'
 
@@ -151,12 +204,12 @@ class Calc(Parser):
     # Parsing rules
 
     precedence = (
-        ('left', 'PLUS', 'MINUS'),
+        ('left', 'PLUS', 'MINUS', 'MORETHAN', 'LESSTHAN', 'MOREOREQUAL', 'LESSOREQUAL', 'SAME'),
         ('left', 'TIMES', 'DIVIDE'),
         ('left', 'EXP', 'LPAREN'),
         ('right', 'UMINUS'),
-        ('nonassoc','FORFUNC')
     )
+
     def p_statement_assign(self, p):
         '''statement : ID EQUALS expression'''
 
@@ -188,16 +241,6 @@ class Calc(Parser):
         'statement : expression'
         print(p[1])
 
-    def p_statement_for(self, p):
-        '''statement : FOR LPAREN expression RPAREN LKEY statement RKEY'''
-        print ("LINENO", p.lineno(1))
-        for data in p: 
-            print ("p", data)
-
-    def p_expression_for(self, p):
-        '''expression : ID SEMICOLON expression SEMICOLON expression'''
-
-        p[0] = [p[1], p[3], p[5]]
 
     def p_expression_binop(self, p):
         """
@@ -207,16 +250,23 @@ class Calc(Parser):
                   | expression DIVIDE expression
                   | expression EXP expression
         """
-        if p[2] == '+':
-            p[0] = p[1] + p[3]
-        elif p[2] == '-':
-            p[0] = p[1] - p[3]
-        elif p[2] == '*':
-            p[0] = p[1] * p[3]
-        elif p[2] == '/':
-            p[0] = p[1] / p[3]
-        elif p[2] == '**':
-            p[0] = p[1] ** p[3]
+
+        if isinstance(p[1], int) == False or isinstance(p[3], int) == False:
+
+            print("Syntax error")
+
+        else:
+
+            if p[2] == '+':
+                p[0] = p[1] + p[3]
+            elif p[2] == '-':
+                p[0] = p[1] - p[3]
+            elif p[2] == '*':
+                p[0] = p[1] * p[3]
+            elif p[2] == '/':
+                p[0] = p[1] / p[3]
+            elif p[2] == '**':
+                p[0] = p[1] ** p[3]
 
     def p_expression_uminus(self, p):
         'expression : MINUS expression %prec UMINUS'
