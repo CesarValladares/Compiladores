@@ -1,4 +1,2 @@
-a = 10
-b = 20
-c = a + b
-c
+a = 0
+for(a;20;1){print a}
