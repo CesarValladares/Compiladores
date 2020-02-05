@@ -16,7 +16,7 @@ class Parser(object):
         self.debug = kw.get('debug', 0)
         self.names = {}
         self.arrays = {}
-        self.lines_loop = []
+        self.lines_loop = [[],[],[],[],[],[],[]]
         self.counter_lines = []
         self.current_line = ''
         try:
@@ -46,6 +46,45 @@ class Parser(object):
 
             yacc.parse(s)
 
+    def createFor(self, line, i, lines, no_array):
+
+        line = line.replace('for', '')
+        line = line.replace('(', '')
+        line = line.replace(')', '')
+        line = line.replace(' ', '')
+        line = line.replace('{', '')
+        line = line.replace('\n', '')
+
+        args = line.split(';')
+
+        aux_line = ''
+        aux_i = i
+
+        while '}' not in aux_line:
+
+            if '}' in aux_line:
+                break
+
+            aux_i += 1
+            aux_line = lines[aux_i].replace("\n", '')
+
+            if '}' not in aux_line and aux_line not in self.lines_loop[no_array]:
+                self.lines_loop[no_array].append(aux_line)
+                self.counter_lines.append(aux_i)
+
+        start_for = self.names[args[0]]
+
+        for algo in range(start_for, int(args[1]), int(args[2])):
+            
+            for index, loop_line in enumerate(self.lines_loop[no_array]):
+                
+                if 'for' in loop_line:
+                    self.createFor(loop_line, self.counter_lines[index], lines, no_array+1)
+                else:
+                    yacc.parse(loop_line)
+
+            self.names[args[0]] += int(args[2])
+
     def readFile(self, fileName):
 
         file1 = open(fileName, 'r')
@@ -55,49 +94,16 @@ class Parser(object):
 
             try:
                 self.current_line = line
-                
+
                 if 'for' in line:
-                
-                    line = line.replace('for', '')
-                    line = line.replace('(', '')
-                    line = line.replace(')', '')
-                    line = line.replace(' ', '')
-                    line = line.replace('{', '')
-                    line = line.replace('\n', '')
 
-                    args = line.split(';')
-
-                    aux_line = ''
-                    aux_i = i              
-
-                    while '}' not in aux_line:
-
-                        if '}' in aux_line:
-                            break
-
-                        aux_i += 1
-                        aux_line = lines[aux_i].replace("\n",'')
-                        
-                        if '}' not in aux_line:
-                            self.lines_loop.append(aux_line)
-                            self.counter_lines.append(aux_i)
-
-                    start_for = self.names[args[0]]    
-                    
-                    for algo in range(start_for, int(args[1]), int(args[2])):
-
-                        if self.names[args[0]] + int(args[2]) < int(args[1]):
-                                                    
-                            self.names[args[0]] += int(args[2])
-                            for loop_line in self.lines_loop:
-                                yacc.parse(loop_line)
+                    self.createFor(line, i, lines, 0)
 
                 else:
-                    
 
                     if i not in self.counter_lines and '}' not in line:
-                        self.lines_loop = []
-                        self.counter_lines = []
+
+                        self.lines_loop = [[],[],[],[],[],[],[]]
                         yacc.parse(line)
 
             except EOFError:
@@ -108,12 +114,12 @@ class Parser(object):
 class Calc(Parser):
 
     reserved = {
-        'print' : 'PRINT',
-        'for' : 'FOR',
-        'if' : 'IF',
-        'then' : 'THEN',
-        'else' : 'ELSE',
-        'while' : 'WHILE'
+        'print': 'PRINT',
+        'for': 'FOR',
+        'if': 'IF',
+        'then': 'THEN',
+        'else': 'ELSE',
+        'while': 'WHILE'
     }
 
     tokens = [
@@ -145,9 +151,9 @@ class Calc(Parser):
         'MOREOREQUAL',
         'SAME',
         'SEMICOLON',
-        
+
     ] + list(reserved.values())
-    
+
     t_LESSTHAN = r'<'
     t_MORETHAN = r'>'
     t_MOREOREQUAL = r'>='
@@ -173,7 +179,7 @@ class Calc(Parser):
 
     def t_ID(self, p):
         r'[a-zA-Z_][a-zA-Z_0-9]*'
-        p.type = self.reserved.get(p.value,'ID')
+        p.type = self.reserved.get(p.value, 'ID')
         return p
 
     def t_NUMBER(self, t):
@@ -204,7 +210,8 @@ class Calc(Parser):
     # Parsing rules
 
     precedence = (
-        ('left', 'PLUS', 'MINUS', 'MORETHAN', 'LESSTHAN', 'MOREOREQUAL', 'LESSOREQUAL', 'SAME'),
+        ('left', 'PLUS', 'MINUS', 'MORETHAN', 'LESSTHAN',
+         'MOREOREQUAL', 'LESSOREQUAL', 'SAME'),
         ('left', 'TIMES', 'DIVIDE'),
         ('left', 'EXP', 'LPAREN'),
         ('right', 'UMINUS'),
@@ -220,7 +227,6 @@ class Calc(Parser):
         '''statement : PRINT expression'''
 
         print(p[2])
-        
 
     def p_statement_list(self, p):
         '''statement : ID EQUALS LBRACKET statement RBRACKET
@@ -236,11 +242,9 @@ class Calc(Parser):
         else:
             self.arrays[p[1]] = p[4]
 
-
     def p_statement_expr(self, p):
         'statement : expression'
         print(p[1])
-
 
     def p_expression_binop(self, p):
         """
@@ -281,8 +285,8 @@ class Calc(Parser):
             try:
                 p[0] = array[p[3]]
 
-            except LookupError:    
-                print ("index out of range in", self.current_line)
+            except LookupError:
+                print("index out of range in", self.current_line)
 
         except LookupError:
             print("Undefined string '%s'" % p[1])
@@ -320,8 +324,7 @@ if __name__ == '__main__':
 
     calc = Calc()
 
-
-    try: 
+    try:
         fileName = sys.argv[1]
 
         if fileName.endswith('.lb'):
@@ -329,5 +332,5 @@ if __name__ == '__main__':
         else:
             print("Extension error")
     except:
-        
+
         calc.run()
