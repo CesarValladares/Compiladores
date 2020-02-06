@@ -1,4 +1,6 @@
 a = 0
-for (a ; 10 ; 1) {
+b = 10
+while (a < b){
     print a
+    a = a +1
 }

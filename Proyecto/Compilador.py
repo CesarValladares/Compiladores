@@ -17,6 +17,7 @@ class Parser(object):
         self.names = {}
         self.arrays = {}
         self.lines_loop = [[],[],[],[],[],[],[]]
+        self.lines_while = [[],[],[],[],[],[],[]]
         self.counter_lines = []
         self.current_line = ''
         try:
@@ -73,17 +74,74 @@ class Parser(object):
                 self.counter_lines.append(aux_i)
 
         start_for = self.names[args[0]]
+        end_for = self.names[args[1]]
 
-        for algo in range(start_for, int(args[1]), int(args[2])):
-            
+        for algo in range(start_for, end_for, int(args[2])):
+
             for index, loop_line in enumerate(self.lines_loop[no_array]):
-                
-                if 'for' in loop_line:
-                    self.createFor(loop_line, self.counter_lines[index], lines, no_array+1)
-                else:
-                    yacc.parse(loop_line)
+                self.check_lines(loop_line, index, lines, no_array)
 
             self.names[args[0]] += int(args[2])
+
+    def check_lines(self, loop_line, index, lines, no_array):
+
+        if 'for' in loop_line:
+            self.createFor(loop_line, self.counter_lines[index], lines, no_array+1)
+        elif 'while' in loop_line:
+            self.createWhile(loop_line, self.counter_lines[index], lines, no_array+1)
+        else:
+            yacc.parse(loop_line)
+
+    def createWhile(self, line, i, lines,no_array):
+        
+        line = line.replace('while', '')
+        line = line.replace('(', '')
+        line = line.replace(')', '')
+        line = line.replace('{', '')
+        line = line.replace('\n', '')
+
+        args = line.split(" ")
+        for a in range(len(args)-1):
+            if args[a] == '':
+                args.pop(a)
+
+        aux_line = ''
+        aux_i = i
+
+        while '}' not in aux_line:
+
+            if '}' in aux_line:
+
+                break
+            
+            aux_i += 1
+            aux_line = lines[aux_i].replace("\n", '')
+
+            
+            if '}' not in aux_line and aux_line not in self.lines_while[no_array]:
+                self.lines_while[no_array].append(aux_line)
+                self.counter_lines.append(aux_i)
+
+        if args[1] == '<':
+            while self.names[args[0]] < self.names[args[2]]:
+                for index, loop_line in enumerate(self.lines_while[no_array]):
+                    self.check_lines(loop_line, index, lines, no_array)
+        elif args[1] == '>':
+            while self.names[args[0]] > self.names[args[2]]:
+                for index, loop_line in enumerate(self.lines_while[no_array]):
+                    self.check_lines(loop_line, index, lines, no_array)
+        elif args[1] == '<=':
+            while self.names[args[0]] <= self.names[args[2]]:
+                for index, loop_line in enumerate(self.lines_while[no_array]):
+                    self.check_lines(loop_line, index, lines, no_array)
+        elif args[1] == '>=':
+            while self.names[args[0]] >= self.names[args[2]]:
+                for index, loop_line in enumerate(self.lines_while[no_array]):
+                    self.check_lines(loop_line, index, lines, no_array)
+        elif args[1] == '==':
+            while self.names[args[0]] == self.names[args[2]]:
+                for index, loop_line in enumerate(self.lines_while[no_array]):
+                    self.check_lines(loop_line, index, lines, no_array)
 
     def readFile(self, fileName):
 
@@ -96,9 +154,9 @@ class Parser(object):
                 self.current_line = line
 
                 if 'for' in line:
-
                     self.createFor(line, i, lines, 0)
-
+                elif 'while' in line:
+                    self.createWhile(line, i, lines, 0)
                 else:
 
                     if i not in self.counter_lines and '}' not in line:
