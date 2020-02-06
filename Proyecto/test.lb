@@ -1,6 +1,13 @@
-a = 0
-b = 10
-while (a < b){
+function algo(a, b, c){
     print a
-    a = a +1
+    print b
+    print c
 }
+a = 1
+b = 10
+c = 100
+d = 244
+e = 203
+f = 2001
+algo(a, b, c)
+algo(d, e, f)
